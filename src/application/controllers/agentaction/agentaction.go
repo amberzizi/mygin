@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 	"gopkg.in/gcfg.v1"
-	myginuser "mygin/src/models"
+	myginuser2 "mygin/src/application/models"
 	"net/http"
 )
 var db *sql.DB
@@ -30,7 +30,7 @@ type mysqlsetting struct {
 }
 
 
-func returnMysqlSetting() *mysqlsetting{
+func returnMysqlSetting() *mysqlsetting {
 	mysql := mysqlsetting{}
 	err := gcfg.ReadFileInto(&mysql, "src/conf/systeminfo.ini")
 	if err != nil {
@@ -104,7 +104,7 @@ func Sendinfo(c *gin.Context){
 func queryRowDemo(){
 
 	sqlStr := "select id,name,age from user where id=?"
-	var u myginuser.User
+	var u myginuser2.User
 	err := db.QueryRow(sqlStr,1).Scan(&u.Id,&u.Name,&u.Age)
 	if err != nil {
 		fmt.Printf("scan failed err:%v\n",err)
@@ -124,7 +124,7 @@ func queryMulRowDemo(){
 	defer rows.Close()
 
 	for rows.Next(){
-		var u myginuser.User
+		var u myginuser2.User
 		err := rows.Scan(&u.Id,&u.Name,&u.Age)
 		if err != nil {
 			fmt.Printf("scan faild,err:%v\n",err)

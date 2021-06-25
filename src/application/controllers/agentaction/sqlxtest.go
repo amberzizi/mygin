@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
-	myginuser "mygin/src/models"
+	myginuser2 "mygin/src/application/models"
 	"net/http"
 )
 
@@ -30,7 +30,7 @@ func Sendsqlx(c *gin.Context){
 func queryRowDemo2(db *sql.DB){
 
 	sqlStr := "select id,name,age from user where id=?"
-	var u myginuser.User
+	var u myginuser2.User
 	err := db.QueryRow(sqlStr,1).Scan(&u.Id,&u.Name,&u.Age)
 	if err != nil {
 		fmt.Printf("scan failed err:%v\n",err)

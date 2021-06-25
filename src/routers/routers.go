@@ -2,9 +2,8 @@ package routers
 
 import (
 	"github.com/gin-gonic/gin"
-	"mygin/src/controllers/agentaction"
-	"mygin/src/controllers/tools"
-	user "mygin/src/controllers/users"
+	agentaction2 "mygin/src/application/controllers/agentaction"
+	user2 "mygin/src/application/controllers/users"
 	"net/http"
 )
 
@@ -18,9 +17,8 @@ func helloHandler(c *gin.Context) {
 func SetupRouter() *gin.Engine {
 	r := gin.Default()
 	r.GET("/hello", helloHandler)
-	r.GET("/hellos", user.Sendinfo)
-	r.GET("/helloa",agentaction.Sendinfo)
-	r.GET("/hellosqlx",agentaction.Sendsqlx)
-	r.GET("/hellozap",tools.WriteLogGin)
+	r.GET("/hellos", user2.Sendinfo)
+	r.GET("/helloa", agentaction2.Sendinfo)
+	r.GET("/hellosqlx", agentaction2.Sendsqlx)
 	return r
 }

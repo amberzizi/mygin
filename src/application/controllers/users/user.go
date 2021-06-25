@@ -1,10 +1,11 @@
 package user
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
-	"gopkg.in/gcfg.v1"
+	"math/rand"
+	tools2 "mygin/src/application/controllers/tools"
 	"net/http"
+	"strconv"
 )
 type configuration struct {
 	Enabled bool
@@ -33,14 +34,21 @@ func Sendinfo(c *gin.Context){
 	//}
 	//fmt.Println(conf)
 
-	config := configuration2{}
-	err := gcfg.ReadFileInto(&config, "src/conf/systeminfo.ini")
-	if err != nil {
-		fmt.Println("Failed to parse config file: %s", err)
-	}
-	fmt.Println(config.Section.Path)
+	//config := configuration2{}
+	//err := gcfg.ReadFileInto(&config, "src/conf/systeminfo.ini")
+	//if err != nil {
+	//	fmt.Println("Failed to parse config file: %s", err)
+	//}
+	//fmt.Println(config.Section.Path)
+
+	//测试zaplog
+	logger,_ := tools2.LogerProducter()
+	logger.Warn("watch user...")
+	//测试二维码生成
+	randname := rand.Intn(1000)
+	var url = tools2.CreateQrcode(200,200,"testinfo",strconv.Itoa(randname))
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "Hello sendinfo!",
+		"message": "Hello sendinfo!"+url,
 	})
 }
