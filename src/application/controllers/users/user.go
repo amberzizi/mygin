@@ -3,7 +3,7 @@ package user
 import (
 	"github.com/gin-gonic/gin"
 	"math/rand"
-	tools2 "mygin/src/application/controllers/tools"
+	"mygin/src/tools"
 	"net/http"
 	"strconv"
 )
@@ -42,11 +42,11 @@ func Sendinfo(c *gin.Context){
 	//fmt.Println(config.Section.Path)
 
 	//测试zaplog
-	logger,_ := tools2.LogerProducter()
+	logger,_ := tools.LogerProducter()
 	logger.Warn("watch user...")
 	//测试二维码生成
 	randname := rand.Intn(1000)
-	var url = tools2.CreateQrcode(200,200,"testinfo",strconv.Itoa(randname))
+	var url = tools.CreateQrcode(200,200,"testinfo",strconv.Itoa(randname))
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Hello sendinfo!"+url,
