@@ -6,6 +6,7 @@ import (
 	"mygin/src/tools"
 	"net/http"
 	"strconv"
+	"time"
 )
 type configuration struct {
 	Enabled bool
@@ -45,7 +46,8 @@ func Sendinfo(c *gin.Context){
 	logger,_ := tools.LogerProducter()
 	logger.Warn("watch user...")
 	//测试二维码生成
-	randname := rand.Intn(1000)
+	randfinal := rand.New(rand.NewSource(time.Now().UnixNano()))
+	randname := randfinal.Intn(1000)
 	var url = tools.CreateQrcode(200,200,"testinfo",strconv.Itoa(randname))
 
 	c.JSON(http.StatusOK, gin.H{
