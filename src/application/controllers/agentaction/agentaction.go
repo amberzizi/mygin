@@ -8,7 +8,7 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/go-sql-driver/mysql" //init
 	"gopkg.in/gcfg.v1"
 	myginuser2 "mygin/src/application/models"
 	"net/http"

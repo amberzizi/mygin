@@ -42,15 +42,35 @@ func Sendinfo(c *gin.Context){
 	//}
 	//fmt.Println(config.Section.Path)
 
-	//测试zaplog
-	logger,_ := tools.LogerProducter()
-	logger.Warn("watch user...")
-	//测试二维码生成
-	randfinal := rand.New(rand.NewSource(time.Now().UnixNano()))
-	randname := randfinal.Intn(1000)
-	var url = tools.CreateQrcode(200,200,"testinfo",strconv.Itoa(randname))
+	test := false
+	if test  {
+		//测试zaplog
+		logger,_ := tools.LogerProducter()
+		logger.Warn("watch user...")
+		//测试二维码生成
+		randfinal := rand.New(rand.NewSource(time.Now().UnixNano()))
+		randname := randfinal.Intn(1000)
+		var url = tools.CreateQrcode(200,200,"testinfo",strconv.Itoa(randname))
+		println(url)
+	}
+
+	//测试redis
+	rdb := tools.ReturnRedisDb()
+	defer rdb.Close()
+	err := rdb.Set("score",100,0).Err()
+	if err != nil {
+		println("faild set")
+		return
+	}
+	val, err := rdb.Get("score").Result()
+	if err != nil {
+		println("faild get")
+		return
+	}
+	println(val)
+
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "Hello sendinfo!"+url,
+		"message": "Hello sendinfo!",
 	})
 }
