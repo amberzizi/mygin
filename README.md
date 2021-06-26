@@ -1,5 +1,6 @@
 # go init
 ## 目录结构
+```
 .  
 ├── go.mod  
 ├── go.sum  
@@ -34,3 +35,4 @@
 └── tools  
 ├── ginlog.go  
 └── qrcode.go  
+```
