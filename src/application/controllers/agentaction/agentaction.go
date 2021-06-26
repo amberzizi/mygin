@@ -39,9 +39,6 @@ func returnMysqlSetting() *mysqlsetting {
 	return &mysql
 }
 func ReturnMsqlDb() *sql.DB{
-	//if db != nil {
-	//	return db
-	//}
 	mysql := returnMysqlSetting()
 	// init mysql db
 	if err := initMySQL(mysql);err!=nil{

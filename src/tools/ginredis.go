@@ -11,26 +11,23 @@ package tools
 import (
 	"fmt"
 	"github.com/go-redis/redis"
-	"gopkg.in/gcfg.v1"
 )
 
 var rdb *redis.Client
 
-type redissetting struct {
-	//Section struct{
-	//	Enabled bool
-	//	Path    string
-	//}
-	Redis struct{
-		Host  string
-		Password string
-		Db int
-		Poolsize int
+//对外返回redis连接对象
+func ReturnRedisDb() *redis.Client{
+	redisset := GetSetting()//配置文件
+	// init mysql db
+	if err := initRedisClient(redisset);err!=nil{
+		fmt.Printf("try connecting fail,err:%v\n",err)
 	}
+	return rdb
 }
 
+
 //初始化redis 连接
-func initRedisClient(redisset *redissetting) (err error) {
+func initRedisClient(redisset *Setting) (err error) {
 	rdb = redis.NewClient(&redis.Options{
 		Addr: redisset.Redis.Host,
 		Password: redisset.Redis.Password,
@@ -42,39 +39,13 @@ func initRedisClient(redisset *redissetting) (err error) {
 	return err
 }
 
-//对外返回redis连接对象
-func ReturnRedisDb() *redis.Client{
-	redisset := returnRedisSetting()
-	// init mysql db
-	if err := initRedisClient(redisset);err!=nil{
-		fmt.Printf("try connecting fail,err:%v\n",err)
+//main里面用的初始化参数文件 初始化连接
+func ReidsInitConnectParamInMain() string{
+	err := initRedisClient(GetSetting())
+	if err != nil{
+		fmt.Printf("redis try connecting fail,err:%v\n",err)
+		return "redis try connecting fail,err"
+	}else{
+		return "redis try connecting success"
 	}
-	return rdb
-}
-
-//获取配置文件参数
-func returnRedisSetting() *redissetting {
-	redisset := redissetting{}
-	err := gcfg.ReadFileInto(&redisset, "src/conf/systeminfo.ini")
-	if err != nil {
-		fmt.Println("Failed to parse config file: %s", err)
-	}
-	return &redisset
-}
-
-//使用样例
-func testdb(){
-	rdb := ReturnRedisDb()
-	defer rdb.Close()
-	err := rdb.Set("score",100,0).Err()
-	if err != nil {
-		println("faild set")
-		return
-	}
-	val, err := rdb.Get("score").Result()
-	if err != nil {
-		println("faild get")
-		return
-	}
-	println(val)
 }
