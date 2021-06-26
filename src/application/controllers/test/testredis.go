@@ -50,8 +50,8 @@ func Sendredis(c *gin.Context) {
 }
 
 func Testq(c *gin.Context) {
-	//queryMultiRowDemo(mysql.Db)
-	queryGoroseMultiRowDemo(mysql.Gdb)
+	queryMultiRowDemo(mysql.ReturnMsqlDb())
+	queryGoroseMultiRowDemo(mysql.ReturnMsqlGoroseConnection())
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Hello sendinfo!",
 	})

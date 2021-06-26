@@ -22,12 +22,19 @@ func main() {
 	go settings.FreashSetting()
 	//加载log
 	tools.InitLogger()
+	//注册 将日志从缓冲区同步给文件
+	defer zap.L().Sync()
 	zap.L().Debug("logger init success...in main ")
+
 	//加载redis初始化检查
 	zap.L().Debug(redis.ReidsInitConnectParamInMain())
+	defer redis.Close()
+
 	//加载mysql初始化检查
 	zap.L().Debug(mysql.MysqlInitConnectParamInMain())
 	zap.L().Debug(mysql.MysqlGoroseInitConnectParamInMain())
+	defer mysql.Close()
+	defer mysql.Gclose()
 
 	//载入路由
 	r := routers.SetupRouter()

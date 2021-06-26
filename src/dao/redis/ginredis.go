@@ -14,29 +14,26 @@ import (
 	"mygin/src/settings"
 )
 
-var Rdb *redis.Client
+var rdb *redis.Client
+
+//var Rdb *redis.Client
 
 //对外返回redis连接对象
 //可以直接用redis.Rdb
 func ReturnRedisDb() *redis.Client {
-	redisset := settings.GetSetting() //配置文件
-	// init mysql db
-	if err := initRedisClient(redisset); err != nil {
-		fmt.Printf("try connecting fail,err:%v\n", err)
-	}
-	return Rdb
+	return rdb
 }
 
 //初始化redis 连接
 func initRedisClient(redisset *settings.Setting) (err error) {
-	Rdb = redis.NewClient(&redis.Options{
+	rdb = redis.NewClient(&redis.Options{
 		Addr:     redisset.Redis.Host,
 		Password: redisset.Redis.Password,
 		DB:       redisset.Redis.Db,
 		PoolSize: redisset.Redis.Poolsize,
 	})
 
-	_, err = Rdb.Ping().Result()
+	_, err = rdb.Ping().Result()
 	return err
 }
 
@@ -49,4 +46,8 @@ func ReidsInitConnectParamInMain() string {
 	} else {
 		return "redis try connecting success"
 	}
+}
+
+func Close() {
+	_ = rdb.Close()
 }

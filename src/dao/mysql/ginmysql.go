@@ -8,18 +8,19 @@ import (
 	"mygin/src/settings"
 )
 
-var Db *sql.DB
-var Gdb *gorose.Connection
+//var Db *sql.DB
+var db *sql.DB
+
+//var Gdb *gorose.Connection
+var gdb *gorose.Connection
 
 //获取DB对象
 //直接可以用mysq.Db获取
 func ReturnMsqlDb() *sql.DB {
-	mysql := settings.GetSetting() //配置文件
-	// init mysql db
-	if err := initMySQL(mysql); err != nil {
-		fmt.Printf("try connecting fail,err:%v\n", err)
-	}
-	return Db
+	return db
+}
+func ReturnMsqlGoroseConnection() *gorose.Connection {
+	return gdb
 }
 
 // @title    initMySQL
@@ -30,18 +31,18 @@ func ReturnMsqlDb() *sql.DB {
 // @return    err               error           报错
 func initMySQL(mysql *settings.Setting) (err error) {
 	dsn := mysql.Mysql.Username + ":" + mysql.Mysql.Password + "@tcp(" + mysql.Mysql.Host + ":" + mysql.Mysql.Port + ")/" + mysql.Mysql.Dbname
-	Db, err = sql.Open("mysql", dsn)
+	db, err = sql.Open("mysql", dsn)
 	if err != nil {
 		zap.L().Error("mysql init faild", zap.Error(err))
 	}
 
-	err = Db.Ping()
+	err = db.Ping()
 	if err != nil {
 		zap.L().Error("mysql init ping faild", zap.Error(err))
 	}
 	//db.SetConnMaxLifetime(time.Second * 10)
-	Db.SetMaxOpenConns(mysql.Mysql.Maxconnection)
-	Db.SetMaxIdleConns(mysql.Mysql.Maxidleconnection)
+	db.SetMaxOpenConns(mysql.Mysql.Maxconnection)
+	db.SetMaxIdleConns(mysql.Mysql.Maxidleconnection)
 	return err
 }
 
@@ -54,7 +55,7 @@ func initGoroseMySQL(mysql *settings.Setting) (err error) {
 		Prefix:          "",                                                                                                                                  // 表前缀
 		Dsn:             mysql.Mysql.Username + ":" + mysql.Mysql.Password + "@tcp(" + mysql.Mysql.Host + ":" + mysql.Mysql.Port + ")/" + mysql.Mysql.Dbname, // 数据库链接
 	}
-	Gdb, err = gorose.Open(dbConfig1)
+	gdb, err = gorose.Open(dbConfig1)
 	if err != nil {
 		zap.L().Error("mysql gorose init faild", zap.Error(err))
 		return
@@ -84,4 +85,12 @@ func MysqlGoroseInitConnectParamInMain() string {
 		fmt.Printf("mysql Gorose try connecting success\n")
 		return "mysql Gorose try connecting success"
 	}
+}
+
+func Close() {
+	_ = db.Close()
+}
+
+func Gclose() {
+	_ = gdb.Close()
 }
