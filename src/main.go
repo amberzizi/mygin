@@ -17,29 +17,31 @@ import (
 )
 
 func main() {
+	//1.加载配置
 	settings.ReturnSetting()
-	//开启10s刷新配置协程 加载读取锁
+	//2.开启10s刷新配置协程 加载读取锁
 	go settings.FreashSetting()
-	//加载log
+
+	//3.加载zaplog
 	tools.InitLogger()
 	//注册 将日志从缓冲区同步给文件
 	defer zap.L().Sync()
 	zap.L().Debug("logger init success...in main ")
 
-	//加载redis初始化检查
+	//4.加载redis初始化检查
 	zap.L().Debug(redis.ReidsInitConnectParamInMain())
 	defer redis.Close()
 
-	//加载mysql初始化检查
+	//5.加载mysql和mysqlgorose（orm）初始化检查  可关闭其中之一
 	zap.L().Debug(mysql.MysqlInitConnectParamInMain())
 	zap.L().Debug(mysql.MysqlGoroseInitConnectParamInMain())
 	defer mysql.Close()
 	defer mysql.Gclose()
 
-	//载入路由
+	//6.载入路由
 	r := routers.SetupRouter()
 
-	//协程开机监听端口
+	//7.协程开机监听端口
 	//优雅重启  和 supervisor不可兼得 supervisor会自动拉起监控中的关机进程
 	srv := &http.Server{
 		Addr:    settings.GetSetting().App.Runhost + ":" + settings.GetSetting().App.Runport,
@@ -52,7 +54,7 @@ func main() {
 	}()
 	zap.L().Debug(fmt.Sprint("upppppp...", settings.GetSetting().App.Runport))
 
-	//平滑优雅关机
+	//8.平滑优雅关机
 	quit := make(chan os.Signal, 1) //创建一个接收信号的通道
 	//kill 默认会发送 syscall.SIGTERM 信号  常用的ctrl+c就是触发这种信号
 	//kill -2 发送 syscall.SIGINT 信号  添加后才能捕获
