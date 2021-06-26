@@ -29,6 +29,7 @@ type Setting struct {
 		Port              string
 		Maxconnection     int
 		Maxidleconnection int
+		Prefix            string
 	}
 	Redis struct {
 		Host     string

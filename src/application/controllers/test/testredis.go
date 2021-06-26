@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis"
+	"github.com/gohouse/gorose"
 	myginuser "mygin/src/application/models"
 	"mygin/src/dao/mysql"
 	redis2 "mygin/src/dao/redis"
@@ -49,7 +50,8 @@ func Sendredis(c *gin.Context) {
 }
 
 func Testq(c *gin.Context) {
-	queryMultiRowDemo(mysql.Db)
+	//queryMultiRowDemo(mysql.Db)
+	queryGoroseMultiRowDemo(mysql.Gdb)
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Hello sendinfo!",
 	})
@@ -74,4 +76,19 @@ func queryMultiRowDemo(db *sql.DB) {
 		}
 		fmt.Printf("id:%d name:%s age:%d\n", u.Id, u.Name, u.Age)
 	}
+}
+
+func queryGoroseMultiRowDemo(connection *gorose.Connection) {
+	db := connection.NewSession()
+	var user myginuser.User
+	var users []myginuser.User
+	err2 := db.Table(&user).Select()
+	err2 = db.Table(&users).Limit(10).Select()
+	if err2 != nil {
+		fmt.Println(err2)
+		return
+	}
+	fmt.Println(db.LastSql)
+	fmt.Println(user)
+	fmt.Println(users)
 }

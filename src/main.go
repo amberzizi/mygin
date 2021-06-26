@@ -27,6 +27,7 @@ func main() {
 	zap.L().Debug(redis.ReidsInitConnectParamInMain())
 	//加载mysql初始化检查
 	zap.L().Debug(mysql.MysqlInitConnectParamInMain())
+	zap.L().Debug(mysql.MysqlGoroseInitConnectParamInMain())
 
 	//载入路由
 	r := routers.SetupRouter()

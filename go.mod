@@ -7,6 +7,8 @@ require (
 	github.com/gin-gonic/gin v1.7.2
 	github.com/go-redis/redis v6.15.9+incompatible // indirect
 	github.com/go-sql-driver/mysql v1.6.0
+	github.com/gohouse/converter v0.0.3 // indirect
+	github.com/gohouse/gorose v1.0.5 // indirect
 	github.com/natefinch/lumberjack v2.0.0+incompatible // indirect
 	go.uber.org/atomic v1.8.0 // indirect
 	go.uber.org/multierr v1.7.0 // indirect
