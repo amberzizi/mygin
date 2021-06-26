@@ -15,6 +15,7 @@ import (
 )
 
 func helloHandler(c *gin.Context) {
+	time.Sleep(time.Second * 5)
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Hello q1mi!",
 	})
@@ -24,16 +25,16 @@ func helloHandler(c *gin.Context) {
 func SetupRouter() *gin.Engine {
 	//r := gin.Default()
 	r := gin.New()
-	r.Use(GinLogger(zap.L()),GinRecovery(zap.L(),true))
-	r.Use(GinLogger(zap.L()),GinRecovery(zap.L(),true))
+	r.Use(GinLogger(zap.L()), GinRecovery(zap.L(), true))
+	r.Use(GinLogger(zap.L()), GinRecovery(zap.L(), true))
 	r.GET("/hello", helloHandler)
 	r.GET("/helloa", agentaction2.Sendinfo)
 	r.GET("/hellosqlx", agentaction2.Sendsqlx)
 	r.GET("/hellogo", test.Sendgo)
 	r.GET("/helloredis", test.Sendredis)
+	r.GET("/hellotest", test.Testq)
 	return r
 }
-
 
 // GinLogger 接收gin框架默认的日志
 func GinLogger(logger *zap.Logger) gin.HandlerFunc {

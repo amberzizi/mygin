@@ -1,4 +1,4 @@
-package tools
+package settings
 
 import (
 	"fmt"
@@ -6,42 +6,46 @@ import (
 	"sync"
 	"time"
 )
+
 //全局配置变量
 var SettingGlb *Setting
+
 //同步锁
 var configLock = new(sync.RWMutex)
 
 //配置文件结构体
 type Setting struct {
-	App struct{
+	App struct {
 		Name    string
 		Mode    string
-		Runport    string
-		Runhost    string
+		Runport string
+		Runhost string
 	}
-	Mysql struct{
-		Host  string
-		Dbname string
-		Username string
-		Password string
-		Port string
+	Mysql struct {
+		Host              string
+		Dbname            string
+		Username          string
+		Password          string
+		Port              string
+		Maxconnection     int
+		Maxidleconnection int
 	}
-	Redis struct{
-		Host  string
+	Redis struct {
+		Host     string
 		Password string
-		Db int
+		Db       int
 		Poolsize int
 	}
-	Log struct{
-		Level  string
-		Maxsize int
-		Maxage int
+	Log struct {
+		Level      string
+		Maxsize    int
+		Maxage     int
 		Maxbackups int
 	}
 }
 
 //载入配置文件
-func ReturnSetting(){
+func ReturnSetting() {
 	settinginner := Setting{}
 	err := gcfg.ReadFileInto(&settinginner, "src/conf/systeminfo.ini")
 	if err != nil {
@@ -53,15 +57,15 @@ func ReturnSetting(){
 }
 
 //获取配置文件
-func GetSetting() *Setting{
+func GetSetting() *Setting {
 	configLock.RLock()
 	defer configLock.RUnlock()
 	return SettingGlb
 }
 
 //协程启动定时调用载入配置文件
-func FreashSetting(){
-	for{
+func FreashSetting() {
+	for {
 		time.Sleep(10 * time.Second)
 		ReturnSetting()
 	}
