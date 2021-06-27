@@ -11,7 +11,7 @@ package redis
 import (
 	"fmt"
 	"github.com/go-redis/redis"
-	"mygin/src/settings"
+	settings2 "mygin/settings"
 )
 
 var rdb *redis.Client
@@ -25,7 +25,7 @@ func ReturnRedisDb() *redis.Client {
 }
 
 //初始化redis 连接
-func initRedisClient(redisset *settings.Redis) (err error) {
+func initRedisClient(redisset *settings2.Redis) (err error) {
 	rdb = redis.NewClient(&redis.Options{
 		Addr:     redisset.Host,
 		Password: redisset.Password,
@@ -38,7 +38,7 @@ func initRedisClient(redisset *settings.Redis) (err error) {
 }
 
 //main里面用的初始化参数文件 初始化连接
-func ReidsInitConnectParamInMain(redisset *settings.Redis) string {
+func ReidsInitConnectParamInMain(redisset *settings2.Redis) string {
 	err := initRedisClient(redisset)
 	if err != nil {
 		fmt.Printf("redis try connecting fail,err:%v\n", err)

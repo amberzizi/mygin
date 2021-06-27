@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/gohouse/gorose"
 	"go.uber.org/zap"
-	"mygin/src/settings"
+	settings2 "mygin/settings"
 )
 
 //var Db *sql.DB
@@ -29,7 +29,7 @@ func ReturnMsqlGoroseConnection() *gorose.Connection {
 // @param     mysql           mysqlsetting     mysql设置参数
 // @return    none-db            sql.DB          为全局参数赋值
 // @return    err               error           报错
-func initMySQL(mysqlset *settings.Mysql) (err error) {
+func initMySQL(mysqlset *settings2.Mysql) (err error) {
 	dsn := mysqlset.Username + ":" + mysqlset.Password + "@tcp(" + mysqlset.Host + ":" + mysqlset.Port + ")/" + mysqlset.Dbname
 	db, err = sql.Open("mysql", dsn)
 	if err != nil {
@@ -46,7 +46,7 @@ func initMySQL(mysqlset *settings.Mysql) (err error) {
 	return err
 }
 
-func initGoroseMySQL(mysqlset *settings.Mysql) (err error) {
+func initGoroseMySQL(mysqlset *settings2.Mysql) (err error) {
 	var dbConfig1 = &gorose.DbConfigSingle{
 		Driver:          "mysql",                                                                                                              // 驱动: mysql/sqlite/oracle/mssql/postgres
 		EnableQueryLog:  true,                                                                                                                 // 是否开启sql日志
@@ -64,7 +64,7 @@ func initGoroseMySQL(mysqlset *settings.Mysql) (err error) {
 }
 
 //main里面用的初始化参数文件
-func MysqlInitConnectParamInMain(mysqlset *settings.Mysql) string {
+func MysqlInitConnectParamInMain(mysqlset *settings2.Mysql) string {
 	err := initMySQL(mysqlset)
 	if err != nil {
 		fmt.Printf("mysql try connecting fail,err:%v\n", err)
@@ -76,7 +76,7 @@ func MysqlInitConnectParamInMain(mysqlset *settings.Mysql) string {
 }
 
 //main里面用的初始化参数文件
-func MysqlGoroseInitConnectParamInMain(mysqlset *settings.Mysql) string {
+func MysqlGoroseInitConnectParamInMain(mysqlset *settings2.Mysql) string {
 	err := initGoroseMySQL(mysqlset)
 	if err != nil {
 		fmt.Printf("mysql Gorose try connecting fail,err:%v\n", err)

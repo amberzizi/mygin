@@ -11,9 +11,9 @@ import (
 	"os"
 )
 
-func CreateQrcode(width int,height int,info string,qrname string) string{
+func CreateQrcode(width int, height int, info string, qrname string) string {
 
-	var filecreateinfo = "src/statics/images/qrcode/"+qrname+".png"
+	var filecreateinfo = "./statics/images/qrcode/" + qrname + ".png"
 	// Create the barcode
 	qrCode, _ := qr.Encode(info, qr.M, qr.Auto)
 	// Scale the barcode to 200x200 pixels

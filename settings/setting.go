@@ -53,7 +53,7 @@ type Log struct {
 //初始化配置文件
 func InitSettingViaViper() {
 	//载入配置文件
-	viper.AddConfigPath("./src/conf/")
+	viper.AddConfigPath("./conf/")
 	viper.SetConfigName("systeminfo.ini")
 	viper.SetConfigType("ini")
 	err := viper.ReadInConfig()
@@ -89,7 +89,7 @@ func GetSetting() *Setting {
 //使用viper代替
 func returnSettingGcfg() {
 	//settinginner := Setting{}
-	//err := gcfg.ReadFileInto(&settinginner, "src/conf/systeminfo.ini")
+	//err := gcfg.ReadFileInto(&settinginner, "conf/systeminfo.ini")
 	//if err != nil {
 	//	fmt.Println("Failed to parse config file: %s", err)
 	//}

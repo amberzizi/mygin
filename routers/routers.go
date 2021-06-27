@@ -3,8 +3,8 @@ package routers
 import (
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
-	agentaction2 "mygin/src/application/controllers/agentaction"
-	"mygin/src/application/controllers/test"
+	"mygin/application/controllers/agentaction"
+	test2 "mygin/application/controllers/test"
 	"net"
 	"net/http"
 	"net/http/httputil"
@@ -28,11 +28,11 @@ func SetupRouter() *gin.Engine {
 	r.Use(GinLogger(zap.L()), GinRecovery(zap.L(), true))
 	r.Use(GinLogger(zap.L()), GinRecovery(zap.L(), true))
 	r.GET("/hello", helloHandler)
-	r.GET("/helloa", agentaction2.Sendinfo)
-	r.GET("/hellosqlx", agentaction2.Sendsqlx)
-	r.GET("/hellogo", test.Sendgo)
-	r.GET("/helloredis", test.Sendredis)
-	r.GET("/hellotest", test.Testq)
+	r.GET("/helloa", agentaction.Sendinfo)
+	r.GET("/hellosqlx", agentaction.Sendsqlx)
+	r.GET("/hellogo", test2.Sendgo)
+	r.GET("/helloredis", test2.Sendredis)
+	r.GET("/hellotest", test2.Testq)
 	return r
 }
 

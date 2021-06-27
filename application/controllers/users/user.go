@@ -5,7 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis"
 	"math/rand"
-	redis2 "mygin/src/dao/redis"
+	redis3 "mygin/dao/redis"
 	"mygin/src/tools"
 	"net/http"
 	"strconv"
@@ -47,9 +47,6 @@ func Sendinfo(c *gin.Context) {
 
 	test := false
 	if test {
-		//测试zaplog
-		logger, _ := tools.LogerProducter()
-		logger.Warn("watch user...")
 		//测试二维码生成
 		randfinal := rand.New(rand.NewSource(time.Now().UnixNano()))
 		randname := randfinal.Intn(1000)
@@ -58,7 +55,7 @@ func Sendinfo(c *gin.Context) {
 	}
 
 	//测试redis
-	rdb := redis2.ReturnRedisDb()
+	rdb := redis3.ReturnRedisDb()
 	defer rdb.Close()
 	//测试watch
 	key := "watch_count"
