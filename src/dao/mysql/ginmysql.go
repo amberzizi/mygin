@@ -29,8 +29,8 @@ func ReturnMsqlGoroseConnection() *gorose.Connection {
 // @param     mysql           mysqlsetting     mysql设置参数
 // @return    none-db            sql.DB          为全局参数赋值
 // @return    err               error           报错
-func initMySQL(mysql *settings.Setting) (err error) {
-	dsn := mysql.Mysql.Username + ":" + mysql.Mysql.Password + "@tcp(" + mysql.Mysql.Host + ":" + mysql.Mysql.Port + ")/" + mysql.Mysql.Dbname
+func initMySQL(mysqlset *settings.Mysql) (err error) {
+	dsn := mysqlset.Username + ":" + mysqlset.Password + "@tcp(" + mysqlset.Host + ":" + mysqlset.Port + ")/" + mysqlset.Dbname
 	db, err = sql.Open("mysql", dsn)
 	if err != nil {
 		zap.L().Error("mysql init faild", zap.Error(err))
@@ -41,19 +41,19 @@ func initMySQL(mysql *settings.Setting) (err error) {
 		zap.L().Error("mysql init ping faild", zap.Error(err))
 	}
 	//db.SetConnMaxLifetime(time.Second * 10)
-	db.SetMaxOpenConns(mysql.Mysql.Maxconnection)
-	db.SetMaxIdleConns(mysql.Mysql.Maxidleconnection)
+	db.SetMaxOpenConns(mysqlset.Maxconnection)
+	db.SetMaxIdleConns(mysqlset.Maxidleconnection)
 	return err
 }
 
-func initGoroseMySQL(mysql *settings.Setting) (err error) {
+func initGoroseMySQL(mysqlset *settings.Mysql) (err error) {
 	var dbConfig1 = &gorose.DbConfigSingle{
-		Driver:          "mysql",                                                                                                                             // 驱动: mysql/sqlite/oracle/mssql/postgres
-		EnableQueryLog:  true,                                                                                                                                // 是否开启sql日志
-		SetMaxOpenConns: mysql.Mysql.Maxconnection,                                                                                                           // (连接池)最大打开的连接数，默认值为0表示不限制
-		SetMaxIdleConns: mysql.Mysql.Maxidleconnection,                                                                                                       // (连接池)闲置的连接数
-		Prefix:          "",                                                                                                                                  // 表前缀
-		Dsn:             mysql.Mysql.Username + ":" + mysql.Mysql.Password + "@tcp(" + mysql.Mysql.Host + ":" + mysql.Mysql.Port + ")/" + mysql.Mysql.Dbname, // 数据库链接
+		Driver:          "mysql",                                                                                                              // 驱动: mysql/sqlite/oracle/mssql/postgres
+		EnableQueryLog:  true,                                                                                                                 // 是否开启sql日志
+		SetMaxOpenConns: mysqlset.Maxconnection,                                                                                               // (连接池)最大打开的连接数，默认值为0表示不限制
+		SetMaxIdleConns: mysqlset.Maxidleconnection,                                                                                           // (连接池)闲置的连接数
+		Prefix:          "",                                                                                                                   // 表前缀
+		Dsn:             mysqlset.Username + ":" + mysqlset.Password + "@tcp(" + mysqlset.Host + ":" + mysqlset.Port + ")/" + mysqlset.Dbname, // 数据库链接
 	}
 	gdb, err = gorose.Open(dbConfig1)
 	if err != nil {
@@ -64,8 +64,8 @@ func initGoroseMySQL(mysql *settings.Setting) (err error) {
 }
 
 //main里面用的初始化参数文件
-func MysqlInitConnectParamInMain() string {
-	err := initMySQL(settings.GetSetting())
+func MysqlInitConnectParamInMain(mysqlset *settings.Mysql) string {
+	err := initMySQL(mysqlset)
 	if err != nil {
 		fmt.Printf("mysql try connecting fail,err:%v\n", err)
 		return "mysql try connecting fail"
@@ -76,8 +76,8 @@ func MysqlInitConnectParamInMain() string {
 }
 
 //main里面用的初始化参数文件
-func MysqlGoroseInitConnectParamInMain() string {
-	err := initGoroseMySQL(settings.GetSetting())
+func MysqlGoroseInitConnectParamInMain(mysqlset *settings.Mysql) string {
+	err := initGoroseMySQL(mysqlset)
 	if err != nil {
 		fmt.Printf("mysql Gorose try connecting fail,err:%v\n", err)
 		return "mysql Gorose try connecting fail"

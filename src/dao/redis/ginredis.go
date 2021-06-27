@@ -25,12 +25,12 @@ func ReturnRedisDb() *redis.Client {
 }
 
 //初始化redis 连接
-func initRedisClient(redisset *settings.Setting) (err error) {
+func initRedisClient(redisset *settings.Redis) (err error) {
 	rdb = redis.NewClient(&redis.Options{
-		Addr:     redisset.Redis.Host,
-		Password: redisset.Redis.Password,
-		DB:       redisset.Redis.Db,
-		PoolSize: redisset.Redis.Poolsize,
+		Addr:     redisset.Host,
+		Password: redisset.Password,
+		DB:       redisset.Db,
+		PoolSize: redisset.Poolsize,
 	})
 
 	_, err = rdb.Ping().Result()
@@ -38,8 +38,8 @@ func initRedisClient(redisset *settings.Setting) (err error) {
 }
 
 //main里面用的初始化参数文件 初始化连接
-func ReidsInitConnectParamInMain() string {
-	err := initRedisClient(settings.GetSetting())
+func ReidsInitConnectParamInMain(redisset *settings.Redis) string {
+	err := initRedisClient(redisset)
 	if err != nil {
 		fmt.Printf("redis try connecting fail,err:%v\n", err)
 		return "redis try connecting fail,err"

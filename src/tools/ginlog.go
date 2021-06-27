@@ -25,23 +25,17 @@ var sugarlogger *zap.SugaredLogger
 //	}
 //}
 
-//外部获取日志使用参数入口
-func LogerProducter() (*zap.Logger, *zap.SugaredLogger) {
-	InitLogger()
-	return logger, sugarlogger
-}
-
 //初始化日志
-func InitLogger() {
+func InitLogger(logsetting *settings.Log) {
 	//用已有日志格式
 	//logger, _ = zap.NewProduction()
 	//sugarlogger = logger.Sugar()
 	//自定义日志格式core
 
 	//core := zapcore.NewCore(getEncoder(), getLogWrite(),zapcore.InfoLevel)
-	logsetting := settings.GetSetting() //配置文件
+	//logsetting := settings.GetSetting() //配置文件
 	var l = new(zapcore.Level)
-	err := l.UnmarshalText([]byte(logsetting.Log.Level))
+	err := l.UnmarshalText([]byte(logsetting.Level))
 	if err != nil {
 		return
 	}
@@ -49,7 +43,7 @@ func InitLogger() {
 		settings.GetSetting().Log.Maxbackups, settings.GetSetting().Log.Maxage, false), l)
 	//zap.AddCaller()增加函数调用信息
 	logger = zap.New(core, zap.AddCaller())
-	sugarlogger = logger.Sugar()
+	//sugarlogger = logger.Sugar()
 	//替换全局logger
 	zap.ReplaceGlobals(logger)
 	fmt.Printf("Log try init success,use zap.L().debug(...)\n")
@@ -92,4 +86,13 @@ func getEncoder() zapcore.Encoder {
 
 func Printetest() {
 	println(settings.GetSetting().Redis.Host)
+}
+
+//关闭公有
+//外部获取日志使用参数入口
+//可废弃 都使用zap.L()的方式获取
+func logerProducter() (*zap.Logger, *zap.SugaredLogger) {
+	logsetting := settings.GetSetting()
+	InitLogger(logsetting.Log)
+	return logger, sugarlogger
 }

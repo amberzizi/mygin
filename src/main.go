@@ -17,25 +17,26 @@ import (
 )
 
 func main() {
-	//1.加载配置
-	settings.ReturnSetting()
-	//2.开启10s刷新配置协程 加载读取锁
-	go settings.FreashSetting()
+	//1.加载配置 使用fsnotify自动加载变化
+	//settings.ReturnSetting() ===废弃
+	settings.InitSettingViaViper()
+	//2.开启10s刷新配置协程 加载读取锁 ===废弃
+	//go settings.FreashSetting()
 
 	//3.加载zaplog
-	tools.InitLogger()
+	tools.InitLogger(settings.SettingGlb.Log)
 	//注册 将日志从缓冲区同步给文件
 	defer zap.L().Sync()
 	zap.L().Debug("logger init success...in main ")
 
 	//4.加载redis初始化检查
-	zap.L().Debug(redis.ReidsInitConnectParamInMain())
+	zap.L().Debug(redis.ReidsInitConnectParamInMain(settings.SettingGlb.Redis))
 	defer redis.Close()
 
 	//5.加载mysql和mysqlgorose（orm）初始化检查  可关闭其中之一
-	zap.L().Debug(mysql.MysqlInitConnectParamInMain())
-	zap.L().Debug(mysql.MysqlGoroseInitConnectParamInMain())
-	defer mysql.Close()
+	//zap.L().Debug(mysql.MysqlInitConnectParamInMain(settings.SettingGlb.Mysql))
+	//defer mysql.Close()
+	zap.L().Debug(mysql.MysqlGoroseInitConnectParamInMain(settings.SettingGlb.Mysql))
 	defer mysql.Gclose()
 
 	//6.载入路由
@@ -44,15 +45,15 @@ func main() {
 	//7.协程开机监听端口
 	//优雅重启  和 supervisor不可兼得 supervisor会自动拉起监控中的关机进程
 	srv := &http.Server{
-		Addr:    settings.GetSetting().App.Runhost + ":" + settings.GetSetting().App.Runport,
+		Addr:    settings.SettingGlb.App.Runhost + ":" + settings.SettingGlb.App.Runport,
 		Handler: r,
 	}
 	go func() {
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			zap.L().Debug(fmt.Sprint("server listen on..."+settings.GetSetting().App.Runport, err))
+			zap.L().Debug(fmt.Sprint("server listen on..."+settings.SettingGlb.App.Runport, err))
 		}
 	}()
-	zap.L().Debug(fmt.Sprint("upppppp...", settings.GetSetting().App.Runport))
+	zap.L().Debug(fmt.Sprint("upppppp...", settings.SettingGlb.App.Runport))
 
 	//8.平滑优雅关机
 	quit := make(chan os.Signal, 1) //创建一个接收信号的通道
@@ -64,7 +65,7 @@ func main() {
 	<-quit
 	zap.L().Debug("Shutdown server...")
 	//创建一个5s超时的context
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*time.Duration(settings.SettingGlb.App.Shutdownwait))
 	defer cancel()
 	//5秒内优雅关闭服务器
 	if err := srv.Shutdown(ctx); err != nil {

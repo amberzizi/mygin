@@ -11,8 +11,8 @@ import (
 )
 
 func Sendgo(c *gin.Context) {
-	go say()
-	println("hello world again ")
+	//go say()
+	println("hello world ")
 	println(settings.SettingGlb.Redis.Host)
 
 	c.JSON(http.StatusOK, gin.H{
